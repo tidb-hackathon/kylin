@@ -403,6 +403,8 @@ public class QueryService extends BasicService {
     }
 
     public SQLResponse doQueryWithCache(SQLRequest sqlRequest, boolean isQueryInspect) {
+      System.setProperty("sql-" + QueryContextFacade.current().getQueryId(), sqlRequest.getSql());
+
         Message msg = MsgPicker.getMsg();
 
         Hasher hasher = Hashing.murmur3_32().newHasher();

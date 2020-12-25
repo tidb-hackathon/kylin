@@ -26,6 +26,7 @@ import org.apache.kylin.metadata.realization.SQLDigest;
 import org.apache.kylin.metadata.tuple.ITuple;
 import org.apache.kylin.metadata.tuple.ITupleIterator;
 import org.apache.kylin.query.relnode.OLAPContext;
+import org.apache.kylin.storage.IStorage;
 import org.apache.kylin.storage.IStorageQuery;
 import org.apache.kylin.storage.StorageFactory;
 import org.slf4j.Logger;
@@ -113,7 +114,14 @@ public class OLAPEnumerator implements Enumerator<Object[]> {
         SQLDigest sqlDigest = olapContext.getSQLDigest();
 
         // query storage engine
-        IStorageQuery storageEngine = StorageFactory.createQuery(olapContext.realization);
+//        IStorageQuery storageEngine = StorageFactory.createQuery(olapContext.realization);
+        IStorageQuery storageEngine;
+        try {
+            storageEngine = ((IStorage) Class.forName("com.zhihu.tidb.kylin.TiDBStorage")
+                .newInstance()).createQuery(olapContext.realization);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
         ITupleIterator iterator = storageEngine.search(olapContext.storageContext, sqlDigest,
                 olapContext.returnTupleInfo);
         if (logger.isDebugEnabled()) {
