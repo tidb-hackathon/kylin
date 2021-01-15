@@ -1,6 +1,5 @@
 package com.zhihu.flink;
 
-import com.mysql.jdbc.Driver;
 import com.zhihu.tibigdata.flink.tidb.TiDBCatalog;
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -21,19 +20,27 @@ public class Hive2TiDB {
     }
   }
 
+  /**
+   * flink run -c com.zhihu.flink.Hive2TiDB ~/engine-flink-sql-3.1.1.jar --kylin.conf.dir
+   * /etc/kylin/conf --hive.conf.dir /etc/hive/conf --cube.name t4_cube --tidb.ttl 10m
+   */
   public static void main(String[] args) throws Exception {
     ParameterTool parameterTool = ParameterTool.fromArgs(args);
     String kylinConfDir = parameterTool.getRequired("kylin.conf.dir");
     String hiveConfDir = parameterTool.getRequired("hive.conf.dir");
     String cubeName = parameterTool.getRequired("cube.name");
+    String ttl = parameterTool.get("tidb.ttl");
     Properties properties = loadKylinProperties(kylinConfDir);
     Information information = new Information(properties, cubeName);
 
     // print sql
-    String tiDBCreateTableSql = information.getTiDBCreateTableSql();
-    System.out.println("create tidb table sql: " + tiDBCreateTableSql);
+    String tiDBCreateTableSql = information.getTiDBCreateTableSql(ttl);
+    System.out.println("--------------------------------------------------------");
+    System.out.println("create tidb table sql: \n" + tiDBCreateTableSql);
+    System.out.println("--------------------------------------------------------");
     String flinkInsertSql = information.getFlinkInsertSql();
-    System.out.println("insert data to tidb sql: " + flinkInsertSql);
+    System.out.println("insert data to tidb sql: \n" + flinkInsertSql);
+    System.out.println("--------------------------------------------------------");
 
     EnvironmentSettings settings = EnvironmentSettings.newInstance().inBatchMode().build();
     TableEnvironment tEnv = TableEnvironment.create(settings);

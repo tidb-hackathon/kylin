@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 public class Information {
 
@@ -142,7 +143,7 @@ public class Information {
     }
   }
 
-  public String getTiDBCreateTableSql() {
+  public String getTiDBCreateTableSql(@Nullable String ttl) {
     List<String> nameAndType = new ArrayList<>();
     dimensionNames.forEach(name -> nameAndType.add(String.format("`%s` VARCHAR(16)", name)));
     for (int i = 0; i < measureNames.size(); i++) {
@@ -161,8 +162,11 @@ public class Information {
     nameAndType.add(String.format("UNIQUE KEY(%s)",
         dimensionNames.stream().map(name -> "`" + name + "`").collect(Collectors.joining(","))));
     return String
-        .format("CREATE TABLE `%s`(\n%s\n)", kylinStorageTableName,
-            String.join(",\n", nameAndType));
+        .format("CREATE TABLE `%s`(\n%s\n) %s",
+            kylinStorageTableName,
+            String.join(",\n", nameAndType),
+            ttl == null ? "" : "ttl = " + ttl
+        );
   }
 
   public String getFlinkInsertSql() {

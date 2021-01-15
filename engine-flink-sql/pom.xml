@@ -28,6 +28,7 @@
 
   <dependencies>
     <!-- flink-tidb-connector -->
+    <!-- https://github.com/tidb-incubator/TiBigData -->
     <dependency>
       <groupId>com.zhihu.tibigdata</groupId>
       <artifactId>flink-tidb-connector</artifactId>

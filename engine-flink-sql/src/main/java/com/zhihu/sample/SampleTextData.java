@@ -59,8 +59,8 @@ public class SampleTextData {
         // write values
         String data = String.join(",", values);
         // concat id and measures
-        // write 1000 records
-        for (int j = 1; j <= 100; j++) {
+        // write 10 random records
+        for (int j = 1; j <= 10; j++) {
           String dataToWrite = String.format("%d,%s", id++, data);
           for (int i = 1; i <= measureCount; i++) {
             int randomValue = random.nextInt(100);
