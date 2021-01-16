@@ -162,10 +162,11 @@ public class Information {
     nameAndType.add(String.format("UNIQUE KEY(%s)",
         dimensionNames.stream().map(name -> "`" + name + "`").collect(Collectors.joining(","))));
     return String
-        .format("CREATE TABLE `%s`(\n%s\n) %s",
+        .format("CREATE TABLE `%s`(\n%s\n) %s %s",
             kylinStorageTableName,
             String.join(",\n", nameAndType),
-            ttl == null ? "" : "ttl = " + ttl
+            ttl == null ? "" : "ttl = " + ttl,
+            "ttl_granularity = 'row'"
         );
   }
 
